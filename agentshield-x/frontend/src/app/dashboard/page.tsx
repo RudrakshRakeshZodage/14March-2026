@@ -30,29 +30,61 @@ export default function DashboardOverview() {
   const [selectedAgent, setSelectedAgent] = useState<any>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  // Simulate WebSocket logs
+  // Real WebSocket connection
   useEffect(() => {
-    const interval = setInterval(() => {
-      const newLog = {
-        id: Math.random().toString(36).substr(2, 9),
-        agent: MOCK_AGENTS[Math.floor(Math.random() * MOCK_AGENTS.length)].name,
-        action: ["API_CALL", "FILE_READ", "NET_SEND", "MODEL_INF"][Math.floor(Math.random() * 4)],
-        severity: Math.random() > 0.8 ? "high" : "info",
-        timestamp: new Date().toLocaleTimeString(),
-        message: "Action authenticated and logged."
-      };
-      setLogs(prev => [newLog, ...prev.slice(0, 15)]);
+    const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+    const wsUrl = `${baseUrl.replace(/^http/, "ws")}/ws/stream`;
+    
+    let socket: WebSocket | null = null;
+    let reconnectTimeout: NodeJS.Timeout;
 
-      if (Math.random() > 0.9) {
-        setActiveAlerts(prev => [{
-          id: Date.now(),
-          title: "Prompt Injection Detected",
-          agent: "AutoCoder-Helper",
-          time: "Just now"
-        }, ...prev.slice(0, 2)]);
-      }
-    }, 3000);
-    return () => clearInterval(interval);
+    const connect = () => {
+      console.log(`Connecting to WebSocket: ${wsUrl}`);
+      socket = new WebSocket(wsUrl);
+
+      socket.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          const newLog = {
+            id: Math.random().toString(36).substr(2, 9),
+            agent: data.agent_id || "System",
+            action: data.action || "LOG",
+            severity: data.severity || "info",
+            timestamp: new Date().toLocaleTimeString(),
+            message: data.message || "Activity recorded"
+          };
+          setLogs(prev => [newLog, ...prev.slice(0, 15)]);
+
+          if (data.severity === "high") {
+            setActiveAlerts(prev => [{
+              id: Date.now(),
+              title: data.message || "Security Alert",
+              agent: data.agent_id,
+              time: "Just now"
+            }, ...prev.slice(0, 2)]);
+          }
+        } catch (e) {
+          console.error("Error parsing WS message:", e);
+        }
+      };
+
+      socket.onclose = () => {
+        console.warn("WebSocket closed. Attempting reconnect in 5s...");
+        reconnectTimeout = setTimeout(connect, 5000);
+      };
+
+      socket.onerror = (err) => {
+        console.error("WebSocket error:", err);
+        socket?.close();
+      };
+    };
+
+    connect();
+
+    return () => {
+      socket?.close();
+      clearTimeout(reconnectTimeout);
+    };
   }, []);
 
   const openAgentDetails = (agent: any) => {

@@ -41,7 +41,7 @@ const generateData = () => {
 
 export default function NetworkGraphPage() {
   const [data, setData] = useState(generateData());
-  const graphRef = useRef<any>();
+  const graphRef = useRef<any>(null);
 
   return (
     <div className="h-full flex flex-col space-y-6">
