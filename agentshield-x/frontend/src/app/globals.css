@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+:root {
+  --background: #050505;
+  --foreground: #ffffff;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --neon-cyan: #00f3ff;
+  --neon-lime: #a2ff00;
+  --neon-purple: #9d00ff;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+}
+
+@utility glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 1rem;
+}
+
+.glass-card {
+  @apply glass p-6 transition-all duration-300 hover:border-white/20 hover:bg-white/10;
+}
+
+/* Neon Glows */
+.neon-glow-cyan {
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+}
+
+.neon-border-cyan {
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+}
+
+/* Animated Grid Background */
+.bg-grid {
+  background-image: linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+.scanline {
+  width: 100%;
+  height: 2px;
+  background: rgba(0, 243, 255, 0.1);
+  position: absolute;
+  top: 0;
+  z-index: 10;
+  animation: scan 8s linear infinite;
+}
+
+@keyframes scan {
+  0% { top: 0; }
+  100% { top: 100%; }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #222;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--neon-cyan);
+}
