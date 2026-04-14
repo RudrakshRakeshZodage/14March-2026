@@ -1,29 +1,42 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Sparkles, ArrowRight, ShieldCheck, Zap, AlertCircle } from "lucide-react";
+import { Sparkles, ArrowRight, Zap, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const MOCK_INSIGHTS = [
+type Insight = {
+  category: string;
+  title: string;
+  text: string;
+  iconType: "sparkles" | "alert" | "zap";
+};
+
+const MOCK_INSIGHTS: Insight[] = [
   {
     category: "optimization",
     title: "Drift Correlation Detected",
     text: "Agents in Cluster-A show 14% behavioral deviation. Recommended policy: Restrict outward API calls for 30m.",
-    icon: <Sparkles size={16} className="text-cyan-400" />
+    iconType: "sparkles",
   },
   {
     category: "threat",
     title: "Anomalous Identity Swap",
     text: "Agent 'AutoCoder-v4' is using outdated PKI signatures. Verify on-chain registry status immediately.",
-    icon: <AlertCircle size={16} className="text-red-400" />
+    iconType: "alert",
   },
   {
     category: "performance",
     title: "Inference Loop Optimization",
     text: "Redundant integrity checks causing 15ms latency. Can safely offload to L2 guardrails.",
-    icon: <Zap size={16} className="text-lime-400" />
-  }
+    iconType: "zap",
+  },
 ];
+
+function InsightIcon({ type }: { type: Insight["iconType"] }) {
+  if (type === "alert") return <AlertCircle size={16} className="text-red-400" />;
+  if (type === "zap") return <Zap size={16} className="text-lime-400" />;
+  return <Sparkles size={16} className="text-cyan-400" />;
+}
 
 export default function InsightsPanel() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -58,7 +71,7 @@ export default function InsightsPanel() {
         >
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-black/40 border border-white/10 flex items-center justify-center">
-              {insight.icon}
+              <InsightIcon type={insight.iconType} />
             </div>
             <h4 className="text-sm font-black uppercase tracking-tight">{insight.title}</h4>
           </div>

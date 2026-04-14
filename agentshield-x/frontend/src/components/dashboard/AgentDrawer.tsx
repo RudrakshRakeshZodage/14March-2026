@@ -5,17 +5,36 @@ import {
   X, 
   ShieldCheck, 
   ShieldAlert, 
-  Hash, 
   Clock, 
   Database, 
   Activity,
-  History,
   Lock,
   ExternalLink
 } from "lucide-react";
+
+type Agent = {
+  id: string;
+  name: string;
+  status: string;
+  score: number;
+  lastAction: string;
+};
+
+type DetailRowProps = {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+};
+
+type AuditSnippetProps = {
+  time: string;
+  action: string;
+  status: string;
+  warning?: boolean;
+};
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function AgentDrawer({ agent, isOpen, onClose }: { agent: any, isOpen: boolean, onClose: () => void }) {
+export default function AgentDrawer({ agent, isOpen, onClose }: { agent: Agent | null, isOpen: boolean, onClose: () => void }) {
   if (!agent) return null;
 
   return (
@@ -133,7 +152,7 @@ export default function AgentDrawer({ agent, isOpen, onClose }: { agent: any, is
   );
 }
 
-function DetailRow({ icon, label, value }: any) {
+function DetailRow({ icon, label, value }: DetailRowProps) {
   return (
     <div className="flex justify-between items-center border-b border-white/5 pb-2 last:border-none">
        <div className="flex items-center gap-2 text-white/30">
@@ -145,7 +164,7 @@ function DetailRow({ icon, label, value }: any) {
   );
 }
 
-function AuditSnippet({ time, action, status, warning = false }: any) {
+function AuditSnippet({ time, action, status, warning = false }: AuditSnippetProps) {
   return (
     <div className="flex justify-between items-center p-3 bg-white/5 rounded-lg text-xs font-mono">
        <div className="flex items-center gap-3">

@@ -21,10 +21,10 @@ AgentShield X is a production-grade enterprise platform designed to enforce secu
 ![Simulation](./11.png)
 
 ### [111] Deep Dive Audit
-![Audit Explorer](./111.png)
+![Audit Explorer](./1111.png)
 
 ### [1111] Global Cluster Ops
-![Global Ops](./1111.png)
+![Global Ops](./111.png)
 
 ---
 

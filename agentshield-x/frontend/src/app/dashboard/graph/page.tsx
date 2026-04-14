@@ -1,30 +1,42 @@
 "use client";
 
-import React, { useMemo, useRef, useEffect, useState } from "react";
+import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { Share2, Activity, ShieldAlert, Cpu } from "lucide-react";
 
 // Dynamically import react-force-graph-2d to prevent SSR issues
 const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), { ssr: false });
 
-// --- Mock Network Data ---
+type GraphNode = {
+  id: number;
+  name: string;
+  group: string;
+  status: "compromised" | "suspicious" | "safe";
+  val: number;
+  x?: number;
+  y?: number;
+};
+
+type GraphLink = {
+  source: number;
+  target: number;
+  value: number;
+};
+
 const generateData = () => {
-  const nodes = [];
-  const links = [];
-  
-  // Create clusters
+  const nodes: GraphNode[] = [];
+  const links: GraphLink[] = [];
   const clusters = ["Core", "Gateway", "Worker"];
-  
+
   for (let i = 0; i < 40; i++) {
     const isCompromised = i === 12 || i === 25;
     const isSuspicious = i === 5 || i === 18;
-    
     nodes.push({
       id: i,
       name: `Agent-${i}`,
       group: clusters[i % 3],
       status: isCompromised ? "compromised" : isSuspicious ? "suspicious" : "safe",
-      val: isCompromised ? 10 : 5
+      val: isCompromised ? 10 : 5,
     });
   }
 
@@ -32,7 +44,7 @@ const generateData = () => {
     links.push({
       source: Math.floor(Math.random() * 40),
       target: Math.floor(Math.random() * 40),
-      value: Math.random()
+      value: Math.random(),
     });
   }
 
@@ -41,7 +53,6 @@ const generateData = () => {
 
 export default function NetworkGraphPage() {
   const [data, setData] = useState(generateData());
-  const graphRef = useRef<any>(null);
 
   return (
     <div className="h-full flex flex-col space-y-6">
@@ -73,71 +84,76 @@ export default function NetworkGraphPage() {
         <ForceGraph2D
           graphData={data}
           nodeLabel="name"
-          nodeColor={(node: any) => {
-            if (node.status === "compromised") return "#ef4444";
-            if (node.status === "suspicious") return "#f59e0b";
+          nodeColor={(node) => {
+            const n = node as GraphNode;
+            if (n.status === "compromised") return "#ef4444";
+            if (n.status === "suspicious") return "#f59e0b";
             return "#22d3ee";
           }}
           linkColor={() => "rgba(255,255,255,0.05)"}
           nodeRelSize={6}
           linkDirectionalParticles={2}
-          linkDirectionalParticleSpeed={(d: any) => d.value * 0.01}
+          linkDirectionalParticleSpeed={(d) => (d as GraphLink).value * 0.01}
           backgroundColor="rgba(0,0,0,0)"
-          onNodeClick={(node: any) => {
-             // Handle node inspection
-             console.log("Inspecting node", node);
+          onNodeClick={(node) => {
+            console.log("Inspecting node", node);
           }}
-          nodeCanvasObject={(node: any, ctx: any, globalScale: any) => {
-            const label = node.name;
-            const fontSize = 12/globalScale;
+          nodeCanvasObject={(node, ctx, globalScale) => {
+            const n = node as GraphNode;
+            const label = n.name;
+            const fontSize = 12 / globalScale;
             ctx.font = `${fontSize}px Inter`;
             const textWidth = ctx.measureText(label).width;
-            const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.2); 
 
             // Draw shadow/glow
-            ctx.shadowColor = node.status === "compromised" ? "#ef4444" : "#22d3ee";
+            ctx.shadowColor = n.status === "compromised" ? "#ef4444" : "#22d3ee";
             ctx.shadowBlur = 10;
 
             // Draw node circle
-            ctx.fillStyle = node.status === "compromised" ? "#ef4444" : (node.status === "suspicious" ? "#f59e0b" : "#22d3ee");
-            ctx.beginPath(); 
-            ctx.arc(node.x, node.y, 4, 0, 2 * Math.PI, false); 
+            ctx.fillStyle =
+              n.status === "compromised"
+                ? "#ef4444"
+                : n.status === "suspicious"
+                ? "#f59e0b"
+                : "#22d3ee";
+            ctx.beginPath();
+            ctx.arc(n.x ?? 0, n.y ?? 0, 4, 0, 2 * Math.PI, false);
             ctx.fill();
 
             // Draw label
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-            ctx.fillText(label, node.x - textWidth / 2, node.y + 10);
-            
-            ctx.shadowBlur = 0; // Reset shadow
+            ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+            ctx.fillText(label, (n.x ?? 0) - textWidth / 2, (n.y ?? 0) + 10);
+
+            ctx.shadowBlur = 0;
           }}
         />
 
         {/* Legend / Stats overlay */}
         <div className="absolute top-6 left-6 space-y-4">
-           <div className="glass p-4 border-white/5 w-48">
-              <div className="flex items-center gap-2 mb-2">
-                <Cpu size={14} className="text-cyan-400" />
-                <span className="text-[10px] font-black uppercase tracking-widest">Active Nodes</span>
-              </div>
-              <p className="text-2xl font-black italic tracking-tighter">4,092</p>
-           </div>
-           <div className="glass p-4 border-white/5 w-48 border-red-500/20">
-              <div className="flex items-center gap-2 mb-2">
-                <ShieldAlert size={14} className="text-red-500" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-red-100">Isolation Zone</span>
-              </div>
-              <p className="text-2xl font-black italic tracking-tighter text-red-400">2 Nodes</p>
-           </div>
+          <div className="glass p-4 border-white/5 w-48">
+            <div className="flex items-center gap-2 mb-2">
+              <Cpu size={14} className="text-cyan-400" />
+              <span className="text-[10px] font-black uppercase tracking-widest">Active Nodes</span>
+            </div>
+            <p className="text-2xl font-black italic tracking-tighter">4,092</p>
+          </div>
+          <div className="glass p-4 border-white/5 w-48 border-red-500/20">
+            <div className="flex items-center gap-2 mb-2">
+              <ShieldAlert size={14} className="text-red-500" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-red-100">Isolation Zone</span>
+            </div>
+            <p className="text-2xl font-black italic tracking-tighter text-red-400">2 Nodes</p>
+          </div>
         </div>
 
         <div className="absolute bottom-6 right-6">
-           <button 
+          <button
             onClick={() => setData(generateData())}
             className="glass px-6 py-2 border-white/10 hover:bg-white/5 font-bold text-xs uppercase tracking-widest flex items-center gap-2"
-           >
-             <Activity size={14} className="text-lime-400" />
-             Refresh Topology
-           </button>
+          >
+            <Activity size={14} className="text-lime-400" />
+            Refresh Topology
+          </button>
         </div>
       </div>
     </div>
