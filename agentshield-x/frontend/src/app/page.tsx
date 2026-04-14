@@ -126,32 +126,21 @@ function NeuralCanvas() {
 
 export default function LandingPage() {
   return (
-    <div style={{ minHeight: "100vh", background: "#040408", color: "#fff", overflowX: "hidden", position: "relative" }}>
+    <div className="page-root" id="landing-page-root">
 
       {/* Neural network bg */}
       <NeuralCanvas />
       <div className="scanline" />
 
       {/* Glow orbs */}
-      <div style={{ position: "fixed", top: "-15%", left: "-10%",  width: "55%", height: "55%", background: "radial-gradient(circle, rgba(147,51,234,0.25) 0%,transparent 70%)", pointerEvents: "none", zIndex: 1 }} />
-      <div style={{ position: "fixed", top: "-10%", right: "-10%", width: "45%", height: "45%", background: "radial-gradient(circle, rgba(6,182,212,0.18) 0%,transparent 70%)",  pointerEvents: "none", zIndex: 1 }} />
-      <div style={{ position: "fixed", bottom: "-5%", left: "30%",  width: "40%", height: "40%", background: "radial-gradient(circle, rgba(192,38,211,0.15) 0%,transparent 70%)", pointerEvents: "none", zIndex: 1 }} />
+      <div className="orb-glow-1" id="orb-glow-purple" />
+      <div className="orb-glow-2" id="orb-glow-cyan" />
+      <div className="orb-glow-3" id="orb-glow-magenta" />
 
       {/* ── Nav ── */}
-      <nav style={{
-        position: "relative", zIndex: 10,
-        display: "flex", justifyContent: "space-between", alignItems: "center",
-        padding: "0 56px", height: 68,
-        borderBottom: "1px solid rgba(168,85,247,0.15)",
-        background: "rgba(4,4,8,0.8)", backdropFilter: "blur(20px)",
-      }}>
+      <nav className="nav-container" id="main-nav">
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{
-            width: 36, height: 36, borderRadius: 10,
-            background: "linear-gradient(135deg, #a855f7, #00f5ff)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            boxShadow: "0 0 24px rgba(168,85,247,0.6), 0 0 8px rgba(0,245,255,0.3)",
-          }}>
+          <div className="nav-logo-icon" id="nav-logo-icon">
             <ShieldCheck size={19} style={{ color: "#000" }} />
           </div>
           <span style={{ fontWeight: 800, fontSize: "1.05rem", letterSpacing: "-0.02em" }}>
@@ -165,17 +154,13 @@ export default function LandingPage() {
 
         <div style={{ display: "flex", gap: 36 }}>
           {["Features", "Security", "Network", "Docs"].map((l) => (
-            <a key={l} href="#features" style={{
-              color: "rgba(255,255,255,0.5)", fontSize: "0.85rem", fontWeight: 600,
-              textDecoration: "none", transition: "color 0.2s",
-            }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "#a855f7")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.5)")}
-            >{l}</a>
+            <a key={l} href={`#${l.toLowerCase()}`} className="nav-link" id={`nav-link-${l.toLowerCase()}`}>
+              {l}
+            </a>
           ))}
         </div>
 
-        <Link href="/dashboard" style={{ textDecoration: "none" }}>
+        <Link href="/dashboard" style={{ textDecoration: "none" }} id="nav-cta-launch">
           <button className="glow-btn" style={{ fontSize: "0.75rem", letterSpacing: "0.1em" }}>
             Launch Platform
           </button>
@@ -183,7 +168,7 @@ export default function LandingPage() {
       </nav>
 
       {/* ── Hero ── */}
-      <section style={{ position: "relative", zIndex: 5, textAlign: "center", padding: "120px 32px 80px", maxWidth: 860, margin: "0 auto" }}>
+      <section className="hero-section" id="hero-section">
         <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut" }}>
 
           {/* Live badge */}
@@ -193,33 +178,27 @@ export default function LandingPage() {
           </div>
 
           {/* Headline */}
-          <h1 style={{
-            fontSize: "clamp(3rem, 8vw, 5.8rem)",
-            fontWeight: 900,
-            letterSpacing: "-0.05em",
-            lineHeight: 1.02,
-            marginBottom: 24,
-          }}>
+          <h1 className="hero-headline">
             <span className="gradient-text-hero">IMMUTABLE SECURITY</span>
             <br />
             <span style={{ color: "rgba(255,255,255,0.9)" }}>FOR AI AGENTS</span>
           </h1>
 
-          <p style={{ fontSize: "1.1rem", color: "rgba(255,255,255,0.5)", maxWidth: 580, margin: "0 auto 48px", lineHeight: 1.75, fontWeight: 500 }}>
+          <p className="hero-subheadline">
             Enforce runtime integrity monitoring for autonomous AI agents across distributed networks.
             Detect drift, prevent prompt injection, and log everything to the blockchain.
           </p>
 
           {/* CTA */}
           <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/dashboard" style={{ textDecoration: "none" }}>
+            <Link href="/dashboard" style={{ textDecoration: "none" }} id="hero-cta-get-started">
               <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
                 <button className="glow-btn-solid" style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   Get Started <ArrowRight size={17} />
                 </button>
               </motion.div>
             </Link>
-            <motion.div whileHover={{ scale: 1.04 }}>
+            <motion.div whileHover={{ scale: 1.04 }} id="hero-cta-view-demo">
               <button className="glow-btn" style={{ fontSize: "0.85rem" }}>
                 View Demo
               </button>
@@ -229,25 +208,16 @@ export default function LandingPage() {
       </section>
 
       {/* ── Stats ── */}
-      <section style={{ position: "relative", zIndex: 5, maxWidth: 880, margin: "0 auto", padding: "0 32px 80px" }}>
+      <section style={{ position: "relative", zIndex: 5, maxWidth: 880, margin: "0 auto", padding: "0 32px 80px" }} id="stats-section">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          style={{
-            display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
-            background: "rgba(255,255,255,0.02)",
-            border: "1px solid rgba(168,85,247,0.2)",
-            borderRadius: 20, overflow: "hidden",
-            boxShadow: "0 0 60px rgba(168,85,247,0.08), inset 0 0 60px rgba(0,0,0,0.3)",
-          }}
+          className="stats-grid"
+          id="stats-grid"
         >
           {STATS.map((s, i) => (
-            <div key={i} style={{
-              padding: "28px 16px", textAlign: "center",
-              borderRight: i < 3 ? "1px solid rgba(255,255,255,0.05)" : "none",
-              background: "rgba(168,85,247,0.02)",
-            }}>
+            <div key={i} className="stats-item" id={`stats-item-${i}`}>
               <p style={{
                 fontSize: "2rem", fontWeight: 900, letterSpacing: "-0.04em",
                 color: s.color, textShadow: `0 0 24px ${s.color}88`,
@@ -266,7 +236,7 @@ export default function LandingPage() {
 
       {/* ── Features ── */}
       <section id="features" style={{ position: "relative", zIndex: 5, maxWidth: 1100, margin: "0 auto", padding: "0 32px 120px" }}>
-        <div style={{ textAlign: "center", marginBottom: 60 }}>
+        <div style={{ textAlign: "center", marginBottom: 60 }} id="features-header">
           <p style={{ fontSize: "0.65rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.18em", color: "rgba(168,85,247,0.7)", marginBottom: 14 }}>
             Core Capabilities
           </p>
@@ -279,7 +249,7 @@ export default function LandingPage() {
           </h2>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }} id="features-grid">
           {FEATURES.map((f, i) => {
             const Icon = f.icon;
             return (
@@ -291,14 +261,13 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 className="glass-glow"
                 style={{ padding: "28px 24px" }}
+                id={`feature-card-${i}`}
               >
-                <div style={{
-                  width: 48, height: 48, borderRadius: 12, marginBottom: 20,
+                <div className="feature-card-icon-container" style={{
                   background: `${f.color}14`,
                   border: `1px solid ${f.color}30`,
-                  display: "flex", alignItems: "center", justifyContent: "center",
                   boxShadow: `0 0 20px ${f.color}20`,
-                }}>
+                }} id={`feature-icon-${i}`}>
                   <Icon size={22} style={{ color: f.color }} />
                 </div>
                 <h3 style={{ fontWeight: 800, fontSize: "1.02rem", letterSpacing: "-0.02em", marginBottom: 10 }}>
@@ -314,19 +283,14 @@ export default function LandingPage() {
       </section>
 
       {/* ── CTA Banner ── */}
-      <section style={{ position: "relative", zIndex: 5, maxWidth: 900, margin: "0 auto 100px", padding: "0 32px" }}>
+      <section style={{ position: "relative", zIndex: 5, maxWidth: 900, margin: "0 auto 100px", padding: "0 32px" }} id="cta-banner-section">
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
-          style={{
-            textAlign: "center", padding: "60px 40px",
-            borderRadius: 24, position: "relative", overflow: "hidden",
-            border: "1px solid rgba(168,85,247,0.25)",
-            background: "linear-gradient(135deg, rgba(168,85,247,0.08), rgba(0,245,255,0.04))",
-            boxShadow: "0 0 80px rgba(168,85,247,0.12)",
-          }}
+          className="cta-banner"
+          id="cta-banner"
         >
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, rgba(147,51,234,0.06), rgba(6,182,212,0.06))", pointerEvents: "none" }} />
           <h2 style={{ fontWeight: 900, fontSize: "2.2rem", letterSpacing: "-0.04em", marginBottom: 16 }}>
@@ -335,7 +299,7 @@ export default function LandingPage() {
           <p style={{ color: "rgba(255,255,255,0.4)", marginBottom: 36, fontSize: "0.95rem" }}>
             Join the platform that monitors, protects, and audits your AI agents at scale.
           </p>
-          <Link href="/dashboard" style={{ textDecoration: "none" }}>
+          <Link href="/dashboard" style={{ textDecoration: "none" }} id="cta-banner-launch-dashboard">
             <button className="glow-btn-solid" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
               <Eye size={17} />
               Launch Dashboard
@@ -345,14 +309,8 @@ export default function LandingPage() {
       </section>
 
       {/* ── Footer ── */}
-      <footer style={{
-        position: "relative", zIndex: 5,
-        borderTop: "1px solid rgba(168,85,247,0.12)",
-        padding: "28px 56px",
-        display: "flex", justifyContent: "space-between", alignItems: "center",
-        background: "rgba(4,4,8,0.9)", backdropFilter: "blur(20px)",
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+      <footer className="footer-container" id="main-footer">
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }} id="footer-logo">
           <div style={{ width: 24, height: 24, borderRadius: 6, background: "linear-gradient(135deg,#a855f7,#00f5ff)", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <ShieldCheck size={13} style={{ color: "#000" }} />
           </div>
@@ -361,7 +319,7 @@ export default function LandingPage() {
         <p style={{ fontSize: "0.62rem", textTransform: "uppercase", letterSpacing: "0.1em", color: "rgba(255,255,255,0.2)", fontFamily: "monospace" }}>
           © 2026 AgentShield X · Quantum-Grade AI Security
         </p>
-        <Database size={16} style={{ color: "rgba(168,85,247,0.4)" }} />
+        <Database size={16} style={{ color: "rgba(168,85,247,0.4)" }} id="footer-db-icon" />
       </footer>
     </div>
   );
